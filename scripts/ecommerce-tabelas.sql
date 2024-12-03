@@ -1,6 +1,6 @@
 -- criando banco de dados para cenário e-commerce
 
--- drop database ecommerce;
+drop database ecommerce;
 
 create database ecommerce;
 use ecommerce;
@@ -15,6 +15,8 @@ create table clientes(
     tipo_cliente varchar(3)
 );
 
+desc clientes;
+
 alter table clientes auto_increment=1;
 
 -- criar tabela clientes pj
@@ -24,7 +26,7 @@ create table clientes_pj(
 	cliente_id int,
     
     constraint unique_cnpj_client unique(CNPJ),
-    constraint fk_cliente_id foreign key (cliente_id) references clientes (idCliente)
+    constraint fk_cliente_pj_id foreign key (cliente_id) references clientes (idCliente)
 
 );
 
@@ -34,7 +36,7 @@ create table clientes_pf(
 	cliente_id int,
     
     constraint unique_cpf_client unique(CPF),
-    constraint fk_cliente_id foreign key (cliente_id) references clientes (idCliente)
+    constraint fk_cliente_pf_id foreign key (cliente_id) references clientes (idCliente)
 
 );
 
@@ -46,7 +48,7 @@ create table tipo_pagamento(
     detalhes varchar(100),
     cliente_id int,
     
-     constraint fk_cliente_id foreign key (cliente_id) references clientes (idCliente)
+     constraint fk_cliente_pag_id foreign key (cliente_id) references clientes (idCliente)
 
 );
 
@@ -57,7 +59,7 @@ idFornecedor int auto_increment primary key,
 razao_social varchar(45),
 CNPJ varchar(15),
 
- constraint unique_cnpj_client unique(CNPJ)
+ constraint unique_cnpj_fornecedor unique(CNPJ)
 );
 
 -- criar tabela de estoque
@@ -91,7 +93,7 @@ create table pedidos (
     frete float,
     cliente_id int,
     
-     constraint fk_cliente_id foreign key (cliente_id) references clientes (idCliente)
+     constraint fk_cliente_pedidos_id foreign key (cliente_id) references clientes (idCliente)
 
 );
 
@@ -99,13 +101,24 @@ create table pedidos (
 
 create table produtos_em_pedidos(
 	pedido_id int,
-    cliente_id int,
+    produto_id int,
     quantidade int,
     subtotal float,
     
-	constraint fk_cliente_id foreign key (cliente_id) references clientes (idCliente),
+	constraint fk_produto_id foreign key (produto_id) references produtos (idProduto),
 	constraint fk_pedido_id foreign key (pedido_id) references pedidos (idPedido)
 
+);
+
+-- criar tabela de produtos em estoques
+
+create table produtos_em_estoque(
+	estoque_id int,
+    produto_id int,
+    quantidade int,
+    
+    constraint fk_pd_estoque_id foreign key (estoque_id) references estoques (idEstoque),
+	constraint fk_pd_produto_id foreign key (produto_id) references produtos (idProduto)
 );
 
 -- criar tabela de entregas
@@ -116,5 +129,7 @@ create table entregas(
     codigo_rastreamento varchar(20),
     pedido_id int,
     
-    constraint fk_pedido_id foreign key (pedido_id) references pedidos (idPedido)
+    constraint fk_pedido_entregas_id foreign key (pedido_id) references pedidos (idPedido)
 );
+
+show tables;
